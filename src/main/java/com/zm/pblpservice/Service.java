@@ -14,22 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.zm.piboxlogprocessor;
+package com.zm.pblpservice;
 
+import com.zm.pblp.Api;
+import static com.zm.pblp.configuration.LogChannel.LOGS;
+import com.zm.pblp.model.GeneralLog;
+import static com.zm.pblp.configuration.LogHost.LOCAL;
 import com.zm.rabbitmqservice.RMQApplication;
 
 /**
  *
  * @author zmiller
  */
-public class Service implements API {
+public class Service implements Api {
 
     @Override
-    public void log(String message) {
-        System.out.println(message);
+    public void log(GeneralLog message) {
+        System.out.println(message.getMessage());
     }
     
     public static void main(String[] argv) throws Exception {
-        RMQApplication.start("localhost", "logs", new Service(), API.class, 5);
+        String host = LOCAL.getValue();
+        String channel = LOGS.getValue();
+        RMQApplication.start(host, channel, new Service(), Api.class, 5);
     }
 }
