@@ -16,26 +16,30 @@
  */
 package com.zm.pblpservice;
 
-import com.zm.pblp.Api;
-import static com.zm.pblp.configuration.LogChannel.LOGS;
-import com.zm.pblp.model.GeneralLog;
-import static com.zm.pblp.configuration.LogHost.LOCAL;
+import com.zm.pbmessenger.PBMessengerApi;
+import com.zm.pbmessenger.configuration.PBMessengerConfiguration;
+import com.zm.pbmessenger.model.GeneralLog;
+import com.zm.rabbitmqservice.ClientException;
 import com.zm.rabbitmqservice.RMQApplication;
+import com.zm.rabbitmqservice.ServiceException;
+
+import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author zmiller
  */
-public class Service implements Api {
+public class Service implements PBMessengerApi {
 
     @Override
-    public void log(GeneralLog message) {
+    public GeneralLog log(GeneralLog message) throws ServiceException, ClientException {
         System.out.println(message.getMessage());
+        return  message;
     }
     
     public static void main(String[] argv) throws Exception {
-        String host = LOCAL.getValue();
-        String channel = LOGS.getValue();
-        RMQApplication.start(host, channel, new Service(), Api.class, 5);
+        String host = PBMessengerConfiguration.Host.TEST.getValue();
+        String channel = PBMessengerConfiguration.Channel.TEST.getValue();
+        RMQApplication.start(host, channel, new Service(), PBMessengerApi.class, 5);
     }
 }
